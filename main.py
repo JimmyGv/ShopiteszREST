@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
-
-from models import PedidoInsert, PedidoPay
+from fastapi.responses import JSONResponse,Response,Any
+from models import PedidoInsert, PedidoPay, PedidoCancelado,PedidosConsulta, PedidoConsById
 from dao import Conexion
 
 app = FastAPI()
@@ -41,10 +41,19 @@ def  pagar_pedido(idPedido:str,pedidoPay:PedidoPay) :
     return salida
 
 @app.delete('/pedidos/{idPedido}/cancelar')
-def cancelar_pedido(idPedido: str):
-    return{"mensaje":f"Cancelando el pedido con id: {idPedido}"}
+def cancelar_pedido(idPedido: str,pedidoCacnelado:PedidoCancelado):
+    salida = app.cn.cancelarPedido(idPedido,pedidoCacnelado)
+    return salida
+    #return{"mensaje":f"Cancelando el pedido con id: {idPedido}"}
 
-@app.get('/pedidos')
-def consultaGeneralPedidos():
-    lista=[{"idPedido":"1","total":"140"},{"idPedido":"4","total":"99"},{"idPedido":"5","total":"989.98089"}]
-    return lista
+@app.get('/pedidos',response_model=PedidosConsulta)
+def consultaGeneralOfPedidos()->Any:
+    salida = app.cn.consultaGeneralPedidos()
+    #lista=[{"idPedido":"1","total":"140"},{"idPedido":"4","total":"99"},{"idPedido":"5","total":"989.98089"}]
+    return PedidosConsulta(**salida)
+@app.get('/pedidos/vendedor/{idVendedor}')
+def consultaIndividualOfPedido(idVendedor:int):
+    salida = app.cn.consultaPedidosVendedor(idVendedor)
+    #lista=[{"idPedido":"1","total":"140"},{"idPedido":"4","total":"99"},{"idPedido":"5","total":"989.98089"}]
+    
+    return salida
