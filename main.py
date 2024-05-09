@@ -55,5 +55,4 @@ def consultaGeneralOfPedidos()->Any:
 def consultaIndividualOfPedido(idVendedor:int):
     salida = app.cn.consultaPedidosVendedor(idVendedor)
     #lista=[{"idPedido":"1","total":"140"},{"idPedido":"4","total":"99"},{"idPedido":"5","total":"989.98089"}]
-    
     return salida
